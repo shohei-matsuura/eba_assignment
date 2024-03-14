@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" th:href="@{/css/users.css}">
+    <title>Users / Simple Chat</title>
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #ffd700; /* Yellow background color */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px; /* Adjusted container width */
+            text-align: center;
+            padding: 50px; /* Added padding */
+            border-radius: 20px; /* Added border radius */
+            background-color: #fff; /* White background color */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Added box shadow */
+        }
+
+        h1 {
+            font-size: 3rem; /* Increased heading font size */
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .peer-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .peer {
+            display: flex;
+            align-items: center;
+            color: #333;
+            text-decoration: none;
+            margin: 20px; /* Increased margin */
+            padding: 20px; /* Increased padding */
+            border-radius: 15px; /* Adjusted border radius */
+            background-color: #f8f9fa; /* Light gray background color */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .peer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon {
+            width: 60px; /* Adjusted icon size */
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 20px; /* Increased margin */
+        }
+
+        .name {
+            font-size: 1.5rem; /* Increased font size */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            こんにちは<span th:text="${user.name}"></span>!</br>
+            話したい友達を選んでください!
+        </h1>
+        <ul class="peer-list">
+            <li th:each="peer : ${peers}">
+                <a class="peer" th:href="@{/chat/{id}(id=${peer.id})}">
+                    <!--<img class="icon" th:src="@{/image/{id}(id=${peer.id})}" width="60" height="60"  loading="lazy" decoding="async">-->
+                    <div class="name" th:text="${peer.name}"></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

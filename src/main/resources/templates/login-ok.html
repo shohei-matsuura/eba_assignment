@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>つぶやき隊/ホーム</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: 	#F4E511; /* 濃い黄色 */
+      margin: 0;
+      padding: 0;
+    }
+    #container {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: #fff; /* コンテナ背景色: 白 */
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    #sidebar {
+      flex: 0 0 250px; /* サイドバーの幅を250pxに設定 */
+      background-color: #F4E511; /* サイドバー背景色: 濃い黄色 */
+      padding: 30px;
+      border-right: 2px solid #000; /* 黒 */
+    }
+    #main-content {
+      flex: 1;
+      padding: 30px;
+    }
+    #footer {
+      text-align: center;
+      padding: 15px 0;
+      background-color: #ffcc00; /* フッター背景色: 濃い黄色 */
+      border-top: 2px solid #000; /* 黒 */
+      border-radius: 0 0 20px 20px;
+      font-size: 0.8em;
+      color: #000; /* 黒 */
+    }
+    #footer a {
+      text-decoration: none;
+      color: #fff; /* 白 */
+      font-weight: bold;
+      padding: 5px 10px;
+      background-color: #000; /* 黒 */
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    #footer a:hover {
+      background-color: #fff; /* 白 */
+      color: #000; /* 黒 */
+    }
+    .tweet {
+      border-bottom: 2px solid #000; /* 黒 */
+      padding: 30px 0;
+    }
+    .tweet:last-child {
+      border-bottom: none;
+    }
+    .tweet .author {
+      font-weight: bold;
+      color: #000; /* 黒 */
+    }
+    .tweet .time {
+      color: #000; /* 黒 */
+      font-size: 0.9em;
+    }
+    .tweet .content {
+      margin-top: 20px;
+      color: #000; /* 黒 */
+    }
+    #trends {
+      margin-top: 30px;
+    }
+    .trend-item {
+      margin-bottom: 20px;
+    }
+    .trend-item a {
+      text-decoration: none;
+      color: #000; /* 黒 */
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    h1, h2, h3 {
+      color: #000; /* 黒 */
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+    }
+    h2 {
+      font-size: 2em;
+    }
+    h3 {
+      font-size: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="sidebar">
+      <h2>メニュー</h2>
+      <div id="trends">
+        <h3>トレンド</h3>
+        <div class="trend-item"><a href="/users">チャット画面</a></div>
+        <div class="trend-item"><a href="#">トピック2</a></div>
+        <div class="trend-item"><a href="#">トピック3</a></div>
+        <h3>ユーザ情報</h3>
+        <div class="trend-item"><a href="#">トピック1</a></div>
+        <div class="trend-item"><a href="#">トピック2</a></div>
+        <div class="trend-item"><a href="#">トピック3</a></div>
+      </div>
+    </div>
+    <div id="main-content">
+      <h1>つぶやき隊</h1>
+      <div class="tweet">
+        <div class="author">ユーザーA</div>
+        <div class="time">2024/03/11 10:00</div>
+        <div class="content">これはツイートの内容です。</div>
+      </div>
+      <div class="tweet">
+        <div class="author">ユーザーB</div>
+        <div class="time">2024/03/11 10:05</div>
+        <div class="content">これは別のツイートの内容です。</div>
+      </div>
+      <div class="tweet">
+        <div class="author">ユーザーC</div>
+        <div class="time">2024/03/11 10:10</div>
+        <div class="content">さらに別のツイートの内容です。</div>
+      </div>
+      <!-- 他のツイートも同様に追加可能 -->
+    </div>
+  </div>
+  <div id="footer">
+    <a href="/" style="background-color: #fff; color: #000;">ログアウト</a>
+    © つぶやき隊のページ
+  </div>
+</body>
+</html>
