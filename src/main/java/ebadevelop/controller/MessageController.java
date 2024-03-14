@@ -99,34 +99,37 @@ public class MessageController {
 	}
 	
 	// ファイルを受け取り、保存または処理するエンドポイント
-    @PostMapping("/upload")
-    @ResponseBody
-    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
-        // ファイルが空かどうかをチェック
-        if (file.isEmpty()) {	
-            return "ファイルを選択してください。";
-        }
+	@PostMapping("/upload")
+	@ResponseBody
+	public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+	    // ファイルが空かどうかをチェック
+	    if (file.isEmpty()) {    
+	        return "ファイルを選択してください。";
+	    }
 
-        try {
-            // ファイル名を取得し、ファイルの保存先を指定
-            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            Path uploadDir = Paths.get("uploads");
+	    try {
+	        // ファイル名を取得し、ファイルの保存先を指定
+	        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+	        Path uploadDir = Paths.get("uploads");
 
-            // 保存先ディレクトリが存在しない場合は作成
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
+	        // 保存先ディレクトリが存在しない場合は作成
+	        if (!Files.exists(uploadDir)) {
+	            Files.createDirectories(uploadDir);
+	        }
 
-            // ファイルを保存
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, uploadDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            }
+	        // ファイルを保存
+	        try (InputStream inputStream = file.getInputStream()) {
+	            Files.copy(inputStream, uploadDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+	        }
 
-            return "ファイルが正常にアップロードされました。";
-        } catch (IOException e) {
-            return "ファイルのアップロード中にエラーが発生しました。";
-        }
-    }
+	        // アップロードされたファイルの URL を生成して返す
+	        String fileUrl = "/uploads/" + fileName;
+	        return fileUrl;
+	    } catch (IOException e) {
+	        return "ファイルのアップロード中にエラーが発生しました。";
+	    }
+	}
+
 	
 	@PostMapping("/receive")
 	@ResponseBody

@@ -438,35 +438,41 @@
 		});
 
 
-		$("#file-input").on("change", function () {
-    const file = this.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
+		// ファイルをアップロードする関数
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append("file", file);
 
-    // サーバーにファイルをアップロードする
-    $.ajax({
-        method: "POST",
-        url: baseUrl + "/upload",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            // ファイルのアップロードが成功した場合の処理
-            console.log("ファイルのアップロードに成功しました:", response);
-            // チャット画面にアップロードされた画像を表示する
-            const imageUrl = response; // レスポンスにアップロードされた画像のURLが含まれると仮定します
-            const messageContent = `<img src="${imageUrl}" alt="アップロードされた画像" style="max-width: 100%;">`; // 画像を表示するためのHTMLコードを生成します
-            const messageClassTag = generateMessageClassTag(messageContent); // メッセージのHTMLタグを生成する関数があると仮定します
-            $("#message-list").append(messageClassTag); // 生成されたHTMLコードをチャット画面のメッセージリストに追加します
-            moveToBottom(); // チャット画面を一番下までスクロールします
-        },
-        error: function (xhr, status, error) {
-            // エラーが発生した場合の処理
-            console.error("Error uploading file:", error);
-            // ここにエラーが発生した際の処理を追加します。
+            // サーバーにファイルをアップロードする
+            $.ajax({
+                method: "POST",
+                url: baseUrl + "/upload",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // ファイルのアップロードが成功した場合の処理
+                    console.log("ファイルのアップロードに成功しました:", response);
+                    // チャット画面にアップロードされた画像を表示する
+                    const imageUrl = response; // レスポンスにアップロードされた画像のURLが含まれると仮定します
+                    const messageContent = `<img src="${imageUrl}" alt="アップロードされた画像" class="uploaded-image">`;
+                    const messageClassTag = generateMessageClassTag(messageContent);
+                    $("#message-list").append(messageClassTag);
+                    moveToBottom();
+                },
+                error: function (xhr, status, error) {
+                    // エラーが発生した場合の処理
+                    console.error("Error uploading file:", error);
+                    // ここにエラーが発生した際の処理を追加します。
+                }
+            });
         }
-    });
-});
+
+        // ファイルが選択されたときの処理
+        $("#file-input").on("change", function () {
+            const file = this.files[0];
+            uploadFile(file);
+        });
 
 		// Enterキーが押されたときにメッセージを送信する
 		$("#message-area").keypress(function (event) {
