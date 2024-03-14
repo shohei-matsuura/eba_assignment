@@ -1,394 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/css/chat.css}">
-    <title th:text="${peer.name}"></title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/css/chat.css}">
+	<title th:text="${peer.name}"></title>
 </head>
 <style>
-    @charset "UTF-8";
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #FFFACD; /* Pale goldenrod */
-        margin: 0;
-        padding: 0;
-    }
+	@charset "UTF-8";
 
-    #peer-name {
-        z-index: 9999;
-        position: fixed;
-        width: 100%;
-        font-weight: bold;
-        text-align: center;
-        top: 0;
-        left: 0;
-        padding-top: 15px; /* Increased padding */
-        padding-bottom: 15px; /* Increased padding */
-        border-bottom: 3px solid #FFD700; /* Gold */
-        background-color: #FFD700; /* Gold */
-        color: #333; /* Dark gray */
-        font-size: 1.5em; /* Increased font size */
-    }
-
-    #top-space {
-        height: 50px; /* Increased height */
-    }
-
-    #message-list {
-        display: grid;
-        gap: 1em 0;
-        padding: 25px 15px;
-    }
-
-    .message {
-        display: flex;
-        align-items: center;
-        gap: 0 15px;
-    }
-
-    .content {
-        display: inline-block;
-        position: relative;
-        max-width: 80%;
-        margin: 0;
-        padding: .6em 1em; /* Increased padding */
-        border-radius: 30px; /* Increased border radius */
-        color: #333; /* Dark gray */
-        font-size: 1.1em; /* Increased font size */
-        background-color: #FFFFE0; /* Light goldenrod yellow */
-    }
-
-    .peer_icon {
-        width: 3em; /* Increased icon size */
-        height: 3em; /* Increased icon size */
-        border-radius: 50%;
-    }
-
-    .content.peer_side {
-        background-color: #FFCC00; /* Navajo white */
-    }
-
-    .content.my_side {
-        background-color: #FFFFFF; /* Peach puff */
-        margin: 0 15px 0 auto; /* Adjusted margin */
-    }
-
-    .content::before {
-        position: absolute;
-        top: -15px;
-        width: 20px;
-        height: 30px;
-        content: '';
-    }
-
-    .content.peer_side::before {
-        left: -10px;
-        border-radius: 0 0 0 15px;
-        box-shadow: -3px -15px 0 -7px #FFCC00 inset; /* Navajo white */
-    }
-
-    .content.my_side::before {
-        right: -10px;
-        border-radius: 0 0 15px 0;
-        box-shadow: 3px -15px 0 -7px #FFFFFF inset; /* Peach puff */
-    }
-
-    #bottom-space {
-        height: 90px; /* Increased height */
-    }
-
-    #message-form {
-        z-index: 9999;
-        position: fixed;
-        bottom: 0;
-        padding-bottom: 15px; /* Increased padding */
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center; /* Center items vertically */
-        background-color: #FFD700; /* Gold */
-    }
-
-    #message-area {
-        resize: none;
-        width: 70%; /* Adjusted width */
-        word-wrap: normal;
-        border-radius: 20px; /* Increased border radius */
-        padding: .5em; /* Increased padding */
-        margin-top: 15px;
-        margin-right: 10px; /* Adjusted margin */
-        border: none; /* Removed border */
-        font-size: 1em; /* Font size adjustment */
-    }
-
-    #submit-button {
-        padding: .5em 1em; /* Increased padding */
-        border-radius: 20px; /* Increased border radius */
-        background-color: #333; /* Dark gray */
-        color: #FFF; /* White */
-        border: none; /* Removed border */
-        cursor: pointer;
-        margin-top: 15px;
-        transition: background-color 0.3s ease-in-out;
-        font-size: 1em; /* Font size adjustment */
-    }
-
-    #submit-button:hover {
-        background-color: #FFD700; /* Gold */
-    }
-    /* チャットメッセージのスタイル */
-    .message {
-        clear: both;
-        overflow: auto;
-        margin-bottom: 10px;
-    }
-
-    /* 相手のメッセージ */
-    .peer_message {
-        text-align: left;
-        position: relative;
-    width: fit-content; /* Adjust width as needed */
-    }
-
-    /* 自分のメッセージ */
-    .my_message {
-        text-align: right;
-        position: relative;
-    width: fit-content; /* Adjust width as needed */
-    }
-
- /* 相手側のメッセージを左に表示する */
-	.peer_side {
-	    background-color: #FFFF00; /* 背景色を黄色に変更 */
-	    color: #000000; /* 文字色を黒に変更 */
-	    border-radius: 10px;
-	    padding: 10px;
-	    margin-right: 50%;
-	    margin-left: 10px;
-	    display: inline-block;
-		}
-
-    /* 自分のメッセージを右に表示する */
-    .my_side {
-    background-color: #FFFFFF; /* 背景色を白に変更 */
-    color: #000000; /* 文字色を黒に変更 */
-    border-radius: 10px;
-    padding: 10px;
-    margin-left: 50%;
-    margin-right: 10px;
-    display: inline-block;
+	body {
+		font-family: 'Arial', sans-serif;
+		background-color: #FFFACD;
+		/* Pale goldenrod */
+		margin: 0;
+		padding: 0;
 	}
 
-    /* 相手のアイコン画像 */
-    .peer_icon {
-        float: left;
-        margin-right: 5px;
-        margin-top: 10px;
-    }
+	#peer-name {
+		z-index: 9999;
+		position: fixed;
+		width: 100%;
+		font-weight: bold;
+		text-align: center;
+		top: 0;
+		left: 0;
+		padding-top: 15px;
+		/* Increased padding */
+		padding-bottom: 15px;
+		/* Increased padding */
+		border-bottom: 3px solid #FFD700;
+		/* Gold */
+		background-color: #FFD700;
+		/* Gold */
+		color: #333;
+		/* Dark gray */
+		font-size: 1.5em;
+		/* Increased font size */
+	}
 
-    /* メッセージ内容のスタイル */
-    .content {
-        display: inline-block;
-        max-width: 70%;
-    }
+	#top-space {
+		height: 50px;
+		/* Increased height */
+	}
 
-    /* 送信日時のスタイル */
-    .sent_datetime {
-    position: absolute;
-    bottom: -20px; /* Adjust as needed */
-    font-size: 0.8em;
-    color: #aaa;
-}
-    .file-upload{
+	#message-list {
+		display: grid;
+		gap: 1em 0;
+		padding: 25px 15px;
+	}
+
+	.message {
+		display: flex;
+		align-items: center;
+		gap: 0 15px;
+	}
+
+	.content {
+		display: inline-block;
 		position: relative;
-		top:7px;
+		max-width: 80%;
+		margin: 0;
+		padding: .6em 1em;
+		/* Increased padding */
+		border-radius: 30px;
+		/* Increased border radius */
+		color: #333;
+		/* Dark gray */
+		font-size: 1.1em;
+		/* Increased font size */
+		background-color: #FFFFE0;
+		/* Light goldenrod yellow */
+	}
+
+	.peer_icon {
+		width: 3em;
+		/* Increased icon size */
+		height: 3em;
+		/* Increased icon size */
+		border-radius: 50%;
+	}
+
+	.content.peer_side {
+		background-color: #FFCC00;
+		/* Navajo white */
+	}
+
+	.content.my_side {
+		background-color: #FFFFFF;
+		/* Peach puff */
+		margin: 0 15px 0 auto;
+		/* Adjusted margin */
+	}
+
+	.content::before {
+		position: absolute;
+		top: -15px;
+		width: 20px;
+		height: 30px;
+		content: '';
+	}
+
+	.content.peer_side::before {
+		left: -10px;
+		border-radius: 0 0 0 15px;
+		box-shadow: -3px -15px 0 -7px #FFCC00 inset;
+		/* Navajo white */
+	}
+
+	.content.my_side::before {
+		right: -10px;
+		border-radius: 0 0 15px 0;
+		box-shadow: 3px -15px 0 -7px #FFFFFF inset;
+		/* Peach puff */
+	}
+
+	#bottom-space {
+		height: 90px;
+		/* Increased height */
+	}
+
+	#message-form {
+		z-index: 9999;
+		position: fixed;
+		bottom: 0;
+		padding-bottom: 15px;
+		/* Increased padding */
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		/* Center items vertically */
+		background-color: #FFD700;
+		/* Gold */
+	}
+
+	#message-area {
+		resize: none;
+		width: 70%;
+		/* Adjusted width */
+		word-wrap: normal;
+		border-radius: 20px;
+		/* Increased border radius */
+		padding: .5em;
+		/* Increased padding */
+		margin-top: 15px;
+		margin-right: 10px;
+		/* Adjusted margin */
+		border: none;
+		/* Removed border */
+		font-size: 1em;
+		/* Font size adjustment */
+	}
+
+	#submit-button {
+		padding: .5em 1em;
+		/* Increased padding */
+		border-radius: 20px;
+		/* Increased border radius */
+		background-color: #333;
+		/* Dark gray */
+		color: #FFF;
+		/* White */
+		border: none;
+		/* Removed border */
+		cursor: pointer;
+		margin-top: 15px;
+		transition: background-color 0.3s ease-in-out;
+		font-size: 1em;
+		/* Font size adjustment */
+	}
+
+	#submit-button:hover {
+		background-color: #FFD700;
+		/* Gold */
+	}
+
+	/* チャットメッセージのスタイル */
+	.message {
+		clear: both;
+		overflow: auto;
+		margin-bottom: 10px;
+	}
+
+	/* 相手のメッセージ */
+	.peer_message {
+		text-align: left;
+		position: relative;
+		width: fit-content;
+		/* Adjust width as needed */
+	}
+
+	/* 自分のメッセージ */
+	.my_message {
+		text-align: right;
+		position: relative;
+		width: fit-content;
+		/* Adjust width as needed */
+	}
+
+	/* 相手側のメッセージを左に表示する */
+	.peer_side {
+		background-color: #FFFF00;
+		/* 背景色を黄色に変更 */
+		color: #000000;
+		/* 文字色を黒に変更 */
+		border-radius: 10px;
+		padding: 10px;
+		margin-right: 50%;
+		margin-left: 10px;
+		display: inline-block;
+	}
+
+	/* 自分のメッセージを右に表示する */
+	.my_side {
+		background-color: #FFFFFF;
+		/* 背景色を白に変更 */
+		color: #000000;
+		/* 文字色を黒に変更 */
+		border-radius: 10px;
+		padding: 10px;
+		margin-left: 50%;
+		margin-right: 10px;
+		display: inline-block;
+	}
+
+	/* 相手のアイコン画像 */
+	.peer_icon {
+		float: left;
+		margin-right: 5px;
+		margin-top: 10px;
+	}
+
+	/* メッセージ内容のスタイル */
+	.content {
+		display: inline-block;
+		max-width: 70%;
+	}
+
+	/* 送信日時のスタイル */
+	.sent_datetime {
+		position: absolute;
+		bottom: -20px;
+		/* Adjust as needed */
+		font-size: 0.8em;
+		color: #aaa;
+	}
+
+	.file-upload {
+		position: relative;
+		top: 7px;
 	}
 </style>
+
 <body>
-    <span hidden id="my_id" th:text="${me.id}"></span>
-    <span hidden id="peer_id" th:text="${peer.id}"></span>
+	<span hidden id="my_id" th:text="${me.id}"></span>
+	<span hidden id="peer_id" th:text="${peer.id}"></span>
 
-    <div id="peer-name">
-        <span th:text="${peer.name}"></span>
-    </div>
+	<div id="peer-name">
+		<span th:text="${peer.name}"></span>
+	</div>
 
-    <div id="top-space"></div>
+	<div id="top-space"></div>
 
-    <div id="message-list">
-		 <!-- 自分側のメッセージ -->
-        <div class="message" th:each="message: ${messages}">
-    <th:block th:if="${message.sender.id == me.id}">
-        <div class="my_message">
-            <p class="content my_side" th:text="${message.message}"></p>
-            <p class="sent_datetime" th:text="${message.sentDateTime}"></p>
-        </div>
-    </th:block>
-    <th:block th:if="${message.sender.id == peer.id}">
-        <div class="peer_message">
-            <img class="peer_icon" th:src="@{/image/{id}(id=${peer.id})}" width="45" height="45" loading="lazy" decoding="async"/>
-            <p class="content peer_side" th:text="${message.message}"></p>
-            <p class="sent_datetime" th:text="${message.sentDateTime}"></p>
-        </div>
-    </th:block>
-</div>
+	<div id="message-list">
+		<!-- 自分側のメッセージ -->
+		<div class="message" th:each="message: ${messages}">
+			<th:block th:if="${message.sender.id == me.id}">
+				<div class="my_message">
+					<p class="content my_side" th:text="${message.message}"></p>
+					<p class="sent_datetime" th:text="${message.sentDateTime}"></p>
+				</div>
+			</th:block>
+			<th:block th:if="${message.sender.id == peer.id}">
+				<div class="peer_message">
+					<img class="peer_icon" th:src="@{/image/{id}(id=${peer.id})}" width="45" height="45" loading="lazy"
+						decoding="async" />
+					<p class="content peer_side" th:text="${message.message}"></p>
+					<p class="sent_datetime" th:text="${message.sentDateTime}"></p>
+				</div>
+			</th:block>
+		</div>
 
-    </div>
+	</div>
 
-    <div id="bottom-space"></div>
+	<div id="bottom-space"></div>
 
-    <form id="message-form" enctype="multipart/form-data">
-	    <textarea id="message-area" placeholder="新規メッセージを入力してください..."></textarea>
-	    <input type="file" class="file-upload" id="file-input" accept="image/*, video/*"> <!-- 画像と動画のみを受け付けるように設定 -->
-	    <button type="button" id="submit-button">送信</button>
+	<form id="message-form" enctype="multipart/form-data">
+		<textarea id="message-area" placeholder="新規メッセージを入力してください..."></textarea>
+		<input type="file" class="file-upload" id="file-input" accept="image/*, video/*"> <!-- 画像と動画のみを受け付けるように設定 -->
+		<button type="button" id="submit-button">送信</button>
 	</form>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-	    <script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<script>
 		"use strict";
 
-let myId;
-let peerId;
-let baseUrl;
+		let myId;
+		let peerId;
+		let baseUrl;
 
-function moveToBottom() {
-	const bottom = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-	window.scroll(0, bottom);
-}
-
-function sendMessage() {
-	const message = JSON.stringify({
-		senderId: myId,
-		receiverId: peerId,
-		message: $("#message-area").val()
-	});
-	
-	$.ajax({
-		method: "POST",
-		url: baseUrl + "/send",
-		data: message,
-		contentType: "application/json",
-		dataType: "json" // TODO: write success case and error case
-	});
-	
-	console.log("send: " + message);
-	
-	$("#message-area").val("");
-}
-
-function generateMessageClassTag(innerElement) {
-	const openingTag = `<div class="message">`;
-	const closingTag = `</div>`;
-	return openingTag + innerElement + closingTag;
-}
-
-function generatePeerIconClassTag(id) {
-	const openingTag = `<img class="peer_icon" src="/image/`;
-	const closingTag = `" width="45" height="45" loading="lazy" decoding="async"/>`;
-	return openingTag + id + closingTag;
-}
-
-function generateMessageContentClassTag(sideName, content) {
-	const openingTag = `<p class="content ` + sideName + `">`;
-	const closingTag = `</p>`;
-	return openingTag + content + closingTag;
-}
-
-function generateSentDateTimeTag(sentDateTime) {
-	const openingTag = `<span class="sent_datetime" hidden>`;
-	const closingTag = `</span>`;
-	return openingTag + sentDateTime + closingTag;
-}
-
-function showMessages(messages) {
-    $(".message").each(function() {
-        const existingMessageId = $(this).find(".message_id").text();
-        messages = messages.filter(function(message) {
-            return message.id !== existingMessageId;
-        });
-    });
-
-    for (let i = 0; i < messages.length; i++) {
-        const m = messages[i];
-        const sentDateTimeTag = generateSentDateTimeTag(m.sentDateTime);
-        let appendingElement;
-
-        if (m.senderId == myId) {
-            const messageContentClassTag = generateMessageContentClassTag("my_side", m.message);
-            appendingElement = generateMessageClassTag(messageContentClassTag + sentDateTimeTag);
-        } else {
-            const peerIconClassTag = generatePeerIconClassTag(peerId);
-            const messageContentTag = generateMessageContentClassTag("peer_side", m.message);
-            appendingElement = generateMessageClassTag(peerIconClassTag + messageContentTag + sentDateTimeTag);
-        }
-        $("#message-list").append(appendingElement);
-    }
-}
-
-function receiveMessage() {
-	const messageItem = $(".message");
-	
-	messageItem.ready(function() {
-		let lastMessageDataTime = messageItem.last().children(".sent_datetime").text();
-		if (lastMessageDataTime.length == 0) {
-			lastMessageDataTime = null;
+		function moveToBottom() {
+			const bottom = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+			window.scroll(0, bottom);
 		}
-	
-		console.log(lastMessageDataTime);
-		
-		const messageRequest = JSON.stringify({
-			myId: myId,
-			peerId: peerId,
-			lastMessageDateTime: lastMessageDataTime
-		});
-		
-		$.ajax({
-			method: "POST",
-			url: baseUrl + "/receive",
-			data: messageRequest,
-			contentType: "application/json",
-			dataType: "json"
-		}).done( function (messages) {
-			//console.log("request message");
-			
-			if (messages.length == 0) {
-				return;
-			}
-			
-			console.log(messages);
-			
-			const windowHight = $(window).height();
-			const bottomSpaceTop = $('#bottom-space').offset().top;
-			const scrollTop = $(window).scrollTop();
-			
-			showMessages(messages);
-			
-			if (scrollTop >= bottomSpaceTop - windowHight) {
-				moveToBottom();
-			}
-		}); // TODO: write error case
-	});
-}
 
-	$(function() {
-		myId = $("#my_id").text();
-		peerId = $("#peer_id").text();
-		baseUrl = "http://" + $(location).attr("host");
-		
-		$("form").on("submit", function(e){
-			e.preventDefault();
-		});
-		
-		$("#submit-button").click(function(){
-			sendMessage();
-		});
-		
-		setInterval(receiveMessage, 1000);
-		
-		moveToBottom();
-	});
+		function sendMessage() {
+			const message = JSON.stringify({
+				senderId: myId,
+				receiverId: peerId,
+				message: $("#message-area").val()
+			});
 
-	
-	  $("#file-input").on("change", function() {
+			$.ajax({
+				method: "POST",
+				url: baseUrl + "/send",
+				data: message,
+				contentType: "application/json",
+				dataType: "json" // TODO: write success case and error case
+			});
+
+			console.log("send: " + message);
+
+			$("#message-area").val("");
+		}
+
+		function generateMessageClassTag(innerElement) {
+			const openingTag = `<div class="message">`;
+			const closingTag = `</div>`;
+			return openingTag + innerElement + closingTag;
+		}
+
+		function generatePeerIconClassTag(id) {
+			const openingTag = `<img class="peer_icon" src="/image/`;
+			const closingTag = `" width="45" height="45" loading="lazy" decoding="async"/>`;
+			return openingTag + id + closingTag;
+		}
+
+		function generateMessageContentClassTag(sideName, content) {
+			const openingTag = `<p class="content ` + sideName + `">`;
+			const closingTag = `</p>`;
+			return openingTag + content + closingTag;
+		}
+
+		function generateSentDateTimeTag(sentDateTime) {
+			const openingTag = `<span class="sent_datetime" hidden>`;
+			const closingTag = `</span>`;
+			return openingTag + sentDateTime + closingTag;
+		}
+
+		function showMessages(messages) {
+			$(".message").each(function () {
+				const existingMessageId = $(this).find(".message_id").text();
+				messages = messages.filter(function (message) {
+					return message.id !== existingMessageId;
+				});
+			});
+
+			for (let i = 0; i < messages.length; i++) {
+				const m = messages[i];
+				const sentDateTimeTag = generateSentDateTimeTag(m.sentDateTime);
+				let appendingElement;
+
+				if (m.senderId == myId) {
+					const messageContentClassTag = generateMessageContentClassTag("my_side", m.message);
+					appendingElement = generateMessageClassTag(messageContentClassTag + sentDateTimeTag);
+				} else {
+					const peerIconClassTag = generatePeerIconClassTag(peerId);
+					const messageContentTag = generateMessageContentClassTag("peer_side", m.message);
+					appendingElement = generateMessageClassTag(peerIconClassTag + messageContentTag + sentDateTimeTag);
+				}
+				$("#message-list").append(appendingElement);
+			}
+		}
+
+		function receiveMessage() {
+			const messageItem = $(".message");
+
+			messageItem.ready(function () {
+				let lastMessageDataTime = messageItem.last().children(".sent_datetime").text();
+				if (lastMessageDataTime.length == 0) {
+					lastMessageDataTime = null;
+				}
+
+				console.log(lastMessageDataTime);
+
+				const messageRequest = JSON.stringify({
+					myId: myId,
+					peerId: peerId,
+					lastMessageDateTime: lastMessageDataTime
+				});
+
+				$.ajax({
+					method: "POST",
+					url: baseUrl + "/receive",
+					data: messageRequest,
+					contentType: "application/json",
+					dataType: "json"
+				}).done(function (messages) {
+					//console.log("request message");
+
+					if (messages.length == 0) {
+						return;
+					}
+
+					console.log(messages);
+
+					const windowHight = $(window).height();
+					const bottomSpaceTop = $('#bottom-space').offset().top;
+					const scrollTop = $(window).scrollTop();
+
+					showMessages(messages);
+
+					if (scrollTop >= bottomSpaceTop - windowHight) {
+						moveToBottom();
+					}
+				}); // TODO: write error case
+			});
+		}
+
+		$(function () {
+			myId = $("#my_id").text();
+			peerId = $("#peer_id").text();
+			baseUrl = "http://" + $(location).attr("host");
+
+			$("form").on("submit", function (e) {
+				e.preventDefault();
+			});
+
+			$("#submit-button").click(function () {
+				sendMessage();
+			});
+
+			setInterval(receiveMessage, 1000);
+
+			moveToBottom();
+		});
+
+
+		$("#file-input").on("change", function () {
     const file = this.files[0];
     const formData = new FormData();
     formData.append("file", file);
@@ -400,12 +450,17 @@ function receiveMessage() {
         data: formData,
         processData: false,
         contentType: false,
-        success: function(response) {
-            // アップロードが成功した場合の処理
-            console.log("File uploaded successfully:", response);
-            // ここにファイルがアップロードされた際の処理を追加します。
+        success: function (response) {
+            // ファイルのアップロードが成功した場合の処理
+            console.log("ファイルのアップロードに成功しました:", response);
+            // チャット画面にアップロードされた画像を表示する
+            const imageUrl = response; // レスポンスにアップロードされた画像のURLが含まれると仮定します
+            const messageContent = `<img src="${imageUrl}" alt="アップロードされた画像" style="max-width: 100%;">`; // 画像を表示するためのHTMLコードを生成します
+            const messageClassTag = generateMessageClassTag(messageContent); // メッセージのHTMLタグを生成する関数があると仮定します
+            $("#message-list").append(messageClassTag); // 生成されたHTMLコードをチャット画面のメッセージリストに追加します
+            moveToBottom(); // チャット画面を一番下までスクロールします
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             // エラーが発生した場合の処理
             console.error("Error uploading file:", error);
             // ここにエラーが発生した際の処理を追加します。
@@ -413,13 +468,14 @@ function receiveMessage() {
     });
 });
 
-// Enterキーが押されたときにメッセージを送信する
-        $("#message-area").keypress(function(event) {
-            if (event.which === 13 && !event.shiftKey) { // Enterキーが押され、かつShiftキーが押されていない場合
-                event.preventDefault(); // デフォルトのEnterキーの挙動を無効にする
-                sendMessage(); // メッセージを送信する関数を呼び出す
-            }
-        });
+		// Enterキーが押されたときにメッセージを送信する
+		$("#message-area").keypress(function (event) {
+			if (event.which === 13 && !event.shiftKey) { // Enterキーが押され、かつShiftキーが押されていない場合
+				event.preventDefault(); // デフォルトのEnterキーの挙動を無効にする
+				sendMessage(); // メッセージを送信する関数を呼び出す
+			}
+		});
 	</script>
 </body>
+
 </html>
