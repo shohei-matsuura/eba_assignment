@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
     <link rel="stylesheet" th:href="@{/css/users.css}">
-    <title>Users / Simple Chat</title>
+    <title>つぶやき隊 / ユーザ一覧</title>
     <style>
         /* Custom styles */
         body {
@@ -80,13 +80,16 @@
             話したい友達を選んでください!
         </h1>
         <ul class="peer-list">
-            <li th:each="peer : ${peers}">
-                <a class="peer" th:href="@{/chat/{id}(id=${peer.id})}">
-                    <!--<img class="icon" th:src="@{/image/{id}(id=${peer.id})}" width="60" height="60"  loading="lazy" decoding="async">-->
-                    <div class="name" th:text="${peer.name}"></div>
-                </a>
-            </li>
-        </ul>
+		    <li th:each="peer : ${peers}">
+		        <!-- Check if the peer's ID is not equal to the logged-in user's ID -->
+		        <div th:unless="${peer.id == user.id}">
+		            <a class="peer" th:href="@{/chat/{id}(id=${peer.id})}">
+		                <!--<img class="icon" th:src="@{/image/{id}(id=${peer.id})}" width="60" height="60"  loading="lazy" decoding="async">-->
+		                <div class="name" th:text="${peer.name}"></div>
+		            </a>
+		        </div>
+		    </li>
+		</ul>
     </div>
 </body>
 </html>
