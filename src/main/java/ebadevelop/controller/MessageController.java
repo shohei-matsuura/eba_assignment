@@ -61,22 +61,31 @@ public class MessageController {
 	
 	@GetMapping("/chat/{peerId}")
 	public ModelAndView showChatForm(@PathVariable("peerId") Integer peerId, ModelAndView mav) {
-		mav.setViewName("chat");
-		
-		UserList loginUser = sessionControl.getUser();
-		mav.addObject("me", loginUser);
-		Optional<UserList> peerOptional = this.UserListRepository.findById(peerId);
-		if (peerOptional.isEmpty()) {
-			mav.setViewName("redirect:/users");
-			return mav;
-		}
-		UserList peer = peerOptional.get();
-		mav.addObject("peer", peer);
-		List<Message> messages = this.messageRepository.findByUserIdsOrderByTimestamp(loginUser.getId(), peerId);
-		mav.addObject("messages", messages);
-		
-		return mav;
+	    mav.setViewName("chat");
+	    
+	    UserList loginUser = sessionControl.getUser();
+	    if (loginUser == null) {
+	        mav.setViewName("redirect:/login"); // ログインページにリダイレクトするなどの処理
+	        return mav;
+	    }
+	    
+	    mav.addObject("me", loginUser);
+	    
+	    Optional<UserList> peerOptional = this.UserListRepository.findById(peerId);
+	    if (peerOptional.isEmpty()) {
+	        mav.setViewName("redirect:/users");
+	        return mav;
+	    }
+	    
+	    UserList peer = peerOptional.get();
+	    mav.addObject("peer", peer);
+	    
+	    List<Message> messages = this.messageRepository.findByUserIdsOrderByTimestamp(loginUser.getId(), peerId);
+	    mav.addObject("messages", messages);
+	    
+	    return mav;
 	}
+
 	
 	 @PostMapping("/send")
 	    @ResponseBody
@@ -147,5 +156,21 @@ public class MessageController {
 	        messageJsons.add(m.toMessageJson());
 	    }
 	    return messageJsons;
+	}
+	@PostMapping("/like")
+	@ResponseBody
+	public MessageJson likeMessage(@RequestBody MessageJson MessageJson) {
+	    // データベースからIDでメッセージを取得
+	    Optional<Message> messageOptional = messageRepository.findById(MessageJson.getId());
+	    if (messageOptional.isPresent()) {
+	        // メッセージのいいね数を更新するなどの処理
+	        Message message = messageOptional.get();
+	        message.incrementLikes(); // 例：Messageエンティティにいいねを増やすメソッドがあると仮定
+	        messageRepository.save(message);
+	        logger.info("メッセージにいいねしました：" + message.getId());
+	    } else {
+	        logger.warn("IDが" + MessageJson.getId() + "のメッセージが見つかりませんでした");
+	    }
+	    return MessageJson;
 	}
 }

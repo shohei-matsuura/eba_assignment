@@ -42,6 +42,9 @@ public class Message {
     @NotNull
     private String message;
     
+    @Column(name="likes")
+    private Long likes; // いいねの数を表すフィールド
+    
     public Message() {
         super();
     }
@@ -51,9 +54,18 @@ public class Message {
         this.receiver = receiver;
         this.message = message;
         this.sentDateTime = LocalDateTime.now();
+        this.likes = 0L; // 新しいメッセージはいいねが0件で始まると仮定します
     }
     
     public MessageJson toMessageJson() {
-        return new MessageJson(this.sender.getId(), this.receiver.getId(), this.message, this.sentDateTime);
+        return new MessageJson(this.sender.getId(), this.receiver.getId(), this.message, this.sentDateTime, this.likes);
+    }
+ // いいね数を増やすメソッド
+    public void incrementLikes() {
+        if (this.likes == null) {
+            this.likes = 1L;
+        } else {
+            this.likes++;
+        }
     }
 }

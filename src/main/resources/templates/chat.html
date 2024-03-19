@@ -251,6 +251,22 @@
 		position: relative;
 		top: 7px;
 	}
+
+	/* いいねボタンのスタイル */
+	.like-button {
+		background: none;
+		border: none;
+		font-size: 1.2em;
+		cursor: pointer;
+		color: #e74c3c;
+		/* ハートの色 */
+		outline: none;
+	}
+
+	.like-button:hover {
+		color: #c0392b;
+		/* ホバー時のより濃い色 */
+	}
 </style>
 
 <body>
@@ -277,6 +293,7 @@
 					<img class="peer_icon" th:src="@{/image/{id}(id=${peer.id})}" width="45" height="45" loading="lazy"
 						decoding="async" />
 					<p class="content peer_side" th:text="${message.message}"></p>
+					<button class="like-button" data-message-id="${message.id}">&#10084;</button>
 					<p class="sent_datetime" th:text="${message.sentDateTime}"></p>
 				</div>
 			</th:block>
@@ -441,8 +458,8 @@
 
 		// 画像のプレビューを表示する関数
 		function displayImagePreview(url) {
-	    const imageTag = `<img src="${url}" alt="アップロードされた画像" class="uploaded-image">`;
-	    $("#image-preview").html(imageTag);
+			const imageTag = `<img src="${url}" alt="アップロードされた画像" class="uploaded-image">`;
+			$("#image-preview").html(imageTag);
 		}
 
 		// ファイルをアップロードする関数
@@ -451,21 +468,21 @@
 			formData.append("file", file);
 
 			$.ajax({
-    method: "POST",
-    url: baseUrl + "/upload",
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function (response) {
-        // 成功時の処理
-    },
-    error: function (xhr, status, error) {
-        // エラー時の処理
-        console.error("ファイルのアップロードエラー:", error);
-        // 失敗したファイルのアップロードを示す適切なステータスコードを返す
-        return 400; // または適切なステータスコード
-    }
-});
+				method: "POST",
+				url: baseUrl + "/upload",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					// 成功時の処理
+				},
+				error: function (xhr, status, error) {
+					// エラー時の処理
+					console.error("ファイルのアップロードエラー:", error);
+					// 失敗したファイルのアップロードを示す適切なステータスコードを返す
+					return 400; // または適切なステータスコード
+				}
+			});
 
 		}
 
@@ -473,6 +490,29 @@
 		$("#file-input").on("change", function () {
 			const file = this.files[0];
 			uploadFile(file);
+		});
+		// メッセージに「いいね」を付ける処理
+		function likeMessage(messageId) {
+			// サーバーにいいねを送信
+			$.ajax({
+				method: "POST",
+				url: baseUrl + "/like",
+				data: JSON.stringify({messageId: messageId}),
+				contentType: "application/json",
+				dataType: "json",
+				success: function (response) {
+					// 任意の場合、UIを更新していいねを反映する（例：ボタンの色を変更）
+				},
+				error: function (xhr, status, error) {
+					console.error("メッセージにいいねする際のエラー:", error);
+				}
+			});
+		}
+
+		// いいねボタンのクリックイベントリスナー
+		$(document).on("click", ".like-button", function () {
+			const messageId = $(this).data("message-id");
+			likeMessage(messageId);
 		});
 
 		// Enterキーが押されたときにメッセージを送信する
