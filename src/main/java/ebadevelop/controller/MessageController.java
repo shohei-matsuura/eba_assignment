@@ -1,11 +1,9 @@
 package ebadevelop.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -80,54 +78,52 @@ public class MessageController {
 		return mav;
 	}
 	
-	@PostMapping("/send")
-	@ResponseBody
-	@Transactional
-	public MessageJson send(@RequestBody MessageJson messageJson) {
-		UserList sender = this.sessionControl.getUser();
-		Optional<UserList> receiverOptional = this.UserListRepository.findById(messageJson.getReceiverId());
-		if (receiverOptional.isEmpty()) {
-			return messageJson;
-		}
-		
-		UserList receiver = receiverOptional.get();
-		String messageContent = messageJson.getMessage();
-		Message sentMessage = new Message(sender, receiver, messageContent);
-		this.messageRepository.saveAndFlush(sentMessage);
-		logger.info(String.format("send(sender:%s, reciver:%s, message:%s)", sender, receiver, messageContent));
-		return messageJson;
-	}
+	 @PostMapping("/send")
+	    @ResponseBody
+	    @Transactional
+	    public MessageJson send(@RequestBody MessageJson messageJson) {
+	        UserList sender = this.sessionControl.getUser();
+	        Optional<UserList> receiverOptional = this.UserListRepository.findById(messageJson.getReceiverId());
+	        if (receiverOptional.isEmpty()) {
+	            return messageJson;
+	        }
+	        
+	        UserList receiver = receiverOptional.get();
+	        String messageContent = messageJson.getMessage();
+	        // 送信者と受信者のUserListオブジェクトをセットしてMessageオブジェクトを生成する
+	        Message sentMessage = new Message(sender, receiver, messageContent);
+	        this.messageRepository.saveAndFlush(sentMessage);
+	        logger.info(String.format("send(sender:%s, reciver:%s, message:%s)", sender, receiver, messageContent));
+	        return messageJson;
+	    }
 	
-	// ファイルを受け取り、保存または処理するエンドポイント
-	@PostMapping("/upload")
-	@ResponseBody
-	public String handleFileUpload(@RequestParam("file") MultipartFile file) {
-	    // ファイルが空かどうかをチェック
-	    if (file.isEmpty()) {    
-	        return "ファイルを選択してください。";
-	    }
+	@RestController
+	public class UploadController {
 
-	    try {
-	        // ファイル名を取得し、ファイルの保存先を指定
-	        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-	        Path uploadDir = Paths.get("uploads");
+		@PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
+		public String uploadFile(@RequestParam("file") MultipartFile file) {
+		    if (file.isEmpty()) {
+		        return "ファイルを選択してください。";
+		    }
 
-	        // 保存先ディレクトリが存在しない場合は作成
-	        if (!Files.exists(uploadDir)) {
-	            Files.createDirectories(uploadDir);
-	        }
+		    try {
+		        // ファイルを保存
+		        String uploadsDir = "./uploads/";
+		        Path uploadPath = Paths.get(uploadsDir);
+		        if (!Files.exists(uploadPath)) {
+		            Files.createDirectories(uploadPath);
+		        }
 
-	        // ファイルを保存
-	        try (InputStream inputStream = file.getInputStream()) {
-	            Files.copy(inputStream, uploadDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-	        }
+		        String filename = file.getOriginalFilename();
+		        Path filePath = uploadPath.resolve(filename);
+		        Files.copy(file.getInputStream(), filePath);
 
-	        // アップロードされたファイルの URL を生成して返す
-	        String fileUrl = "/uploads/" + fileName;
-	        return fileUrl;
-	    } catch (IOException e) {
-	        return "ファイルのアップロード中にエラーが発生しました。";
-	    }
+		        // アップロードされたファイルの URL を生成して返す
+		        return "/uploads/" + filename;
+		    } catch (IOException e) {
+		        return "ファイルのアップロード中にエラーが発生しました。";
+		    }
+		}
 	}
 
 	
