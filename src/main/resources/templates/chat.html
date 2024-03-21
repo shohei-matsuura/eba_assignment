@@ -493,22 +493,20 @@
 		});
 		// メッセージに「いいね」を付ける処理
 		function likeMessage(messageId) {
-			// サーバーにいいねを送信
-			$.ajax({
-				method: "POST",
-				url: baseUrl + "/like",
-				data: JSON.stringify({messageId: messageId}),
-				contentType: "application/json",
-				dataType: "json",
-				success: function (response) {
-					// 任意の場合、UIを更新していいねを反映する（例：ボタンの色を変更）
-				},
-				error: function (xhr, status, error) {
-					console.error("メッセージにいいねする際のエラー:", error);
-				}
-			});
-		}
-
+    $.ajax({
+        method: "POST",
+        url: baseUrl + "/like",
+        data: JSON.stringify({ messageId: messageId }),
+        contentType: "application/json",
+        dataType: "json",
+        success: function (response) {
+            // 成功時の処理
+        },
+        error: function (xhr, status, error) {
+            console.error("メッセージにいいねする際のエラー:", error);
+        }
+    });
+}
 		// いいねボタンのクリックイベントリスナー
 		$(document).on("click", ".like-button", function () {
 			const messageId = $(this).data("message-id");

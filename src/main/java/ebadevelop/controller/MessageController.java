@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ebadevelop.beans.SessionControl;
+import ebadevelop.dao.LikeRequestJson;
 import ebadevelop.dao.MessageJson;
 import ebadevelop.dao.MessageRequestJson;
 import ebadevelop.entity.Message;
@@ -134,7 +135,6 @@ public class MessageController {
 		    }
 		}
 	}
-
 	
 	@PostMapping("/receive")
 	@ResponseBody
@@ -159,18 +159,22 @@ public class MessageController {
 	}
 	@PostMapping("/like")
 	@ResponseBody
-	public MessageJson likeMessage(@RequestBody MessageJson MessageJson) {
-	    // データベースからIDでメッセージを取得
-	    Optional<Message> messageOptional = messageRepository.findById(MessageJson.getId());
-	    if (messageOptional.isPresent()) {
-	        // メッセージのいいね数を更新するなどの処理
-	        Message message = messageOptional.get();
-	        message.incrementLikes(); // 例：Messageエンティティにいいねを増やすメソッドがあると仮定
-	        messageRepository.save(message);
-	        logger.info("メッセージにいいねしました：" + message.getId());
-	    } else {
-	        logger.warn("IDが" + MessageJson.getId() + "のメッセージが見つかりませんでした");
+	public void likeMessage(@RequestBody LikeRequestJson likeRequestJson) {
+		try {
+	        Integer messageId = likeRequestJson.getMessageId();
+	        // データベースからIDでメッセージを取得
+	        Optional<Message> messageOptional = messageRepository.findById(messageId);
+	        if (messageOptional.isPresent()) {
+	            // メッセージのいいね数を更新するなどの処理
+	            Message message = messageOptional.get();
+	            message.incrementLikes(); // 例：Messageエンティティにいいねを増やすメソッドがあると仮定
+	            messageRepository.save(message);
+	            logger.info("メッセージにいいねしました：" + message.getId());
+	        } else {
+	            logger.warn("IDが" + messageId + "のメッセージが見つかりませんでした");
+	        }
+		 } catch (NumberFormatException e) {
+		        logger.error("不正なメッセージIDが送信されました: " + e.getMessage());
 	    }
-	    return MessageJson;
 	}
 }
