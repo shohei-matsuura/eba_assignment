@@ -160,21 +160,21 @@ public class MessageController {
 	@PostMapping("/like")
 	@ResponseBody
 	public void likeMessage(@RequestBody LikeRequestJson likeRequestJson) {
-		try {
-	        Integer messageId = likeRequestJson.getMessageId();
-	        // データベースからIDでメッセージを取得
+	    try {
+	        Integer messageId = likeRequestJson.getMessageId(); // 直接Integerにパース
 	        Optional<Message> messageOptional = messageRepository.findById(messageId);
 	        if (messageOptional.isPresent()) {
-	            // メッセージのいいね数を更新するなどの処理
 	            Message message = messageOptional.get();
-	            message.incrementLikes(); // 例：Messageエンティティにいいねを増やすメソッドがあると仮定
+	            message.incrementLikes();
+	            // いいねを押したユーザーを記録
+	            message.addLikedBy(sessionControl.getUser());
 	            messageRepository.save(message);
 	            logger.info("メッセージにいいねしました：" + message.getId());
 	        } else {
 	            logger.warn("IDが" + messageId + "のメッセージが見つかりませんでした");
 	        }
-		 } catch (NumberFormatException e) {
-		        logger.error("不正なメッセージIDが送信されました: " + e.getMessage());
+	    } catch (NumberFormatException e) {
+	        logger.error("不正なメッセージIDが送信されました: " + e.getMessage());
 	    }
 	}
 }

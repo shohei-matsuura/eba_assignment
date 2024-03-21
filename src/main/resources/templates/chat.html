@@ -293,7 +293,8 @@
 					<img class="peer_icon" th:src="@{/image/{id}(id=${peer.id})}" width="45" height="45" loading="lazy"
 						decoding="async" />
 					<p class="content peer_side" th:text="${message.message}"></p>
-					<button class="like-button" data-message-id="${message.id}">&#10084;</button>
+					<button class="like-button" data-message-id="${message.id}"
+						th:classappend="${message.likedByMe} ? 'liked' : ''">&#10084;</button>
 					<p class="sent_datetime" th:text="${message.sentDateTime}"></p>
 				</div>
 			</th:block>
@@ -493,20 +494,20 @@
 		});
 		// メッセージに「いいね」を付ける処理
 		function likeMessage(messageId) {
-    $.ajax({
-        method: "POST",
-        url: baseUrl + "/like",
-        data: JSON.stringify({ messageId: messageId }),
-        contentType: "application/json",
-        dataType: "json",
-        success: function (response) {
-            // 成功時の処理
-        },
-        error: function (xhr, status, error) {
-            console.error("メッセージにいいねする際のエラー:", error);
-        }
-    });
-}
+			$.ajax({
+				method: "POST",
+				url: baseUrl + "/like",
+				data: JSON.stringify({messageId: messageId}),
+				contentType: "application/json",
+				dataType: "json",
+				success: function (response) {
+					// 成功時の処理
+				},
+				error: function (xhr, status, error) {
+					console.error("メッセージにいいねする際のエラー:", error);
+				}
+			});
+		}
 		// いいねボタンのクリックイベントリスナー
 		$(document).on("click", ".like-button", function () {
 			const messageId = $(this).data("message-id");
